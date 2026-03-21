@@ -118,7 +118,7 @@
                 const arcDegree = 360 / activeItems.length;
                 // 캔버스 회전 방향과 포인터 위치 보정 (포인터가 12시 방향일 때)
                 const index = Math.floor((360 - actualDegree + 90) % 360 / arcDegree) % activeItems.length;
-                resultDiv.innerText = `오늘의 결과: [${activeItems[index].name}] ;
+               resultDiv.innerText = ` 결과: [${activeItems[index].name}]`;
             }, 4000);
         }
 
