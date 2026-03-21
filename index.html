@@ -26,7 +26,7 @@
 </head>
 <body>
 
-    <h1>제외 룰렛</h1>
+    <h1>룰렛</h1>
     <div class="container">
         <div class="settings">
             <h3>포함할 항목 선택</h3>
@@ -47,7 +47,7 @@
         const resultDiv = document.getElementById('result');
         
         // 초기 데이터 (이름만 수정하거나 추가하세요)
-        let rawItems = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18"];
+        let rawItems = ["01 범태희", "02 안평화", "03 이서진", "04 이현모", "05 고윤희 ", "06 범태하", "07 권해범", "08 휴고", "09 안지호", "10 이송릭", "11 주인철", "12 최이경", "13 서재언", "14 원지원", "15 김연우", "16 김의현", "17 우진형", "18 강시화"];
         let items = rawItems.map(name => ({ name, enabled: true }));
 
         const colors = ["#ff7675", "#fdcb6e", "#55efc4", "#74b9ff", "#a29bfe", "#fab1a0", "#81ecec", "#dfe6e9"];
@@ -118,7 +118,7 @@
                 const arcDegree = 360 / activeItems.length;
                 // 캔버스 회전 방향과 포인터 위치 보정 (포인터가 12시 방향일 때)
                 const index = Math.floor((360 - actualDegree + 90) % 360 / arcDegree) % activeItems.length;
-                resultDiv.innerText = `오늘의 결과: [${activeItems[index].name}] 🎉`;
+                resultDiv.innerText = `오늘의 결과: [${activeItems[index].name}] ;
             }, 4000);
         }
 
