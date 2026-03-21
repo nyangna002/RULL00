@@ -2,27 +2,41 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>룰렛</title>
     <style>
-        body { font-family: 'Pretendard', sans-serif; display: flex; flex-direction: column; align-items: center; background: #f0f2f5; margin: 0; padding: 20px; }
-        .container { display: flex; gap: 40px; background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); flex-wrap: wrap; justify-content: center; }
-        
-        /* 설정 영역 */
-        .settings { width: 250px; }
-        .item-list { list-style: none; padding: 0; max-height: 450px; overflow-y: auto; border: 1px solid #eee; border-radius: 10px; padding: 10px; }
-        .item-list li { display: flex; align-items: center; margin-bottom: 8px; padding: 5px; border-bottom: 1px solid #f9f9f9; font-size: 14px; }
-        .item-list input { margin-right: 10px; cursor: pointer; }
+        body { font-family: 'Pretendard', sans-serif; display: flex; flex-direction: column; align-items: center; background: #f0f2f5; margin: 0; padding: 10px; }
+        h1 { font-size: 1.5rem; margin: 15px 0; }
 
-        /* 룰렛 영역 */
-        .roulette-container { position: relative; width: 400px; height: 400px; margin-bottom: 80px; }
-        canvas { border-radius: 50%; border: 5px solid #333; transition: transform 4s cubic-bezier(0.15, 0, 0.15, 1); }
-        .pointer { position: absolute; top: -20px; left: 50%; transform: translateX(-50%); width: 0; height: 0; 
-                   border-left: 15px solid transparent; border-right: 15px solid transparent; border-top: 30px solid #ff4757; z-index: 10; }
+        .container { display: flex; flex-direction: column; align-items: center; gap: 20px; background: white; padding: 20px; border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); width: 95%; max-width: 500px; box-sizing: border-box; }
         
-        .controls { display: flex; flex-direction: column; align-items: center; }
-        button { margin-top: 20px; padding: 15px 40px; font-size: 18px; cursor: pointer; background: #1e90ff; color: white; border: none; border-radius: 10px; font-weight: bold; }
-        button:hover { background: #0984e3; }
-        #result { margin-top: 25px; font-size: 24px; font-weight: bold; color: #1e90ff; height: 40px; text-align: center; }
+        /* 설정 영역 - 모바일에서는 룰렛 아래로 배치하거나 높이 조절 */
+        .settings { width: 100%; order: 2; }
+        .item-list { list-style: none; padding: 0; max-height: 200px; overflow-y: auto; border: 1px solid #eee; border-radius: 10px; padding: 5px; }
+        .item-list li { display: flex; align-items: center; margin-bottom: 5px; padding: 8px; border-bottom: 1px solid #f9f9f9; font-size: 0.9rem; }
+        .item-list input { width: 18px; height: 18px; margin-right: 10px; }
+
+        /* 룰렛 영역 - 화면 폭에 맞춰 크기 조절 */
+        .roulette-outer { width: 100%; display: flex; justify-content: center; order: 1; }
+        .roulette-container { position: relative; width: 300px; height: 300px; }
+        canvas { width: 100%; height: 100%; border-radius: 50%; border: 4px solid #333; transition: transform 4s cubic-bezier(0.15, 0, 0.15, 1); }
+        .pointer { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); width: 0; height: 0; 
+                   border-left: 12px solid transparent; border-right: 12px solid transparent; border-top: 25px solid #ff4757; z-index: 10; }
+        
+        .controls { width: 100%; display: flex; flex-direction: column; align-items: center; order: 3; }
+        button { width: 100%; max-width: 250px; margin-top: 15px; padding: 15px; font-size: 1.1rem; cursor: pointer; background: #1e90ff; color: white; border: none; border-radius: 12px; font-weight: bold; }
+        button:active { background: #0984e3; transform: scale(0.98); }
+        #result { margin-top: 20px; font-size: 1.3rem; font-weight: bold; color: #1e90ff; min-height: 30px; text-align: center; }
+
+        /* PC 버전 (가로가 넓을 때) 레이아웃 복구 */
+        @media (min-width: 768px) {
+            .container { flex-direction: row; max-width: 800px; align-items: flex-start; padding: 30px; }
+            .settings { width: 250px; order: 1; }
+            .item-list { max-height: 400px; }
+            .roulette-outer { width: 400px; order: 2; }
+            .roulette-container { width: 400px; height: 400px; }
+            .controls { order: 3; width: auto; position: absolute; bottom: 30px; right: 80px; }
+        }
     </style>
 </head>
 <body>
@@ -30,17 +44,20 @@
     <h1>멤버 룰렛</h1>
     <div class="container">
         <div class="settings">
-            <h3>포함할 항목 선택</h3>
+            <h3 style="margin-top:0;">포함 항목</h3>
             <ul id="item-list" class="item-list"></ul>
         </div>
 
-        <div class="roulette-container">
-            <div class="pointer"></div>
-            <canvas id="rouletteCanvas" width="400" height="400"></canvas>
-            <div class="controls">
-                <button id="spinBtn" onclick="spin()">돌리기!</button>
-                <div id="result"></div>
+        <div class="roulette-outer">
+            <div class="roulette-container">
+                <div class="pointer"></div>
+                <canvas id="rouletteCanvas" width="800" height="800"></canvas>
             </div>
+        </div>
+
+        <div class="controls">
+            <button id="spinBtn" onclick="spin()">돌리기!</button>
+            <div id="result"></div>
         </div>
     </div>
 
@@ -48,11 +65,10 @@
         const canvas = document.getElementById('rouletteCanvas');
         const ctx = canvas.getContext('2d');
         const resultDiv = document.getElementById('result');
+        const spinBtn = document.getElementById('spinBtn');
         
-        // 데이터 정렬
         let rawItems = ["01 범태희", "02 안평화", "03 이서진", "04 이현모", "05 고윤희", "06 범태하", "07 권해범", "08 휴고", "09 안지호", "10 이송릭", "11 주인철", "12 최이경", "13 서재언", "14 원지원", "15 김연우", "16 김의현", "17 우진형", "18 강시화"];
         let items = rawItems.map(name => ({ name, enabled: true }));
-
         const colors = ["#ff7675", "#fdcb6e", "#55efc4", "#74b9ff", "#a29bfe", "#fab1a0", "#81ecec", "#dfe6e9"];
 
         function init() {
@@ -60,7 +76,7 @@
             listEl.innerHTML = '';
             items.forEach((item, idx) => {
                 const li = document.createElement('li');
-                li.innerHTML = `<label><input type="checkbox" ${item.enabled ? 'checked' : ''} onchange="toggleItem(${idx})"> ${item.name}</label>`;
+                li.innerHTML = `<label style="width:100%; display:block;"><input type="checkbox" ${item.enabled ? 'checked' : ''} onchange="toggleItem(${idx})"> ${item.name}</label>`;
                 listEl.appendChild(li);
             });
             draw();
@@ -73,13 +89,13 @@
 
         function draw() {
             const activeItems = items.filter(i => i.enabled);
-            ctx.clearRect(0, 0, 400, 400);
+            ctx.clearRect(0, 0, 800, 800); // 캔버스 해상도를 높여서 모바일에서도 선명하게
 
             if (activeItems.length === 0) {
                 ctx.fillStyle = "#333";
-                ctx.font = "16px Arial";
+                ctx.font = "30px Arial";
                 ctx.textAlign = "center";
-                ctx.fillText("항목을 선택해주세요", 200, 200);
+                ctx.fillText("항목을 선택해주세요", 400, 400);
                 return;
             }
 
@@ -89,18 +105,17 @@
                 const angle = i * arc;
                 ctx.fillStyle = colors[i % colors.length];
                 ctx.beginPath();
-                ctx.moveTo(200, 200);
-                ctx.arc(200, 200, 200, angle, angle + arc);
+                ctx.moveTo(400, 400);
+                ctx.arc(400, 400, 400, angle, angle + arc);
                 ctx.fill();
                 ctx.strokeStyle = "#fff";
-                ctx.lineWidth = 2;
+                ctx.lineWidth = 4;
                 ctx.stroke();
 
                 ctx.save();
                 ctx.fillStyle = "#333";
-                // 18명일 때 글자가 안 겹치도록 12px로 조정
-                ctx.font = "bold 12px Arial";
-                ctx.translate(200 + Math.cos(angle + arc / 2) * 140, 200 + Math.sin(angle + arc / 2) * 140);
+                ctx.font = "bold 24px Arial"; // 해상도가 800이라 폰트 크기도 키움
+                ctx.translate(400 + Math.cos(angle + arc / 2) * 280, 400 + Math.sin(angle + arc / 2) * 280);
                 ctx.rotate(angle + arc / 2 + Math.PI / 2);
                 ctx.fillText(item.name, -ctx.measureText(item.name).width / 2, 0);
                 ctx.restore();
@@ -116,7 +131,8 @@
             if (activeItems.length < 2) return alert("최소 2개 이상의 항목이 필요합니다.");
 
             isSpinning = true;
-            resultDiv.innerText = "LOADING...";
+            spinBtn.disabled = true;
+            resultDiv.innerText = "LOADING";
             
             const randomAdd = Math.floor(Math.random() * 360) + 3600; 
             currentRotation += randomAdd;
@@ -124,9 +140,9 @@
 
             setTimeout(() => {
                 isSpinning = false;
+                spinBtn.disabled = false;
                 const actualDegree = currentRotation % 360;
                 const arcDegree = 360 / activeItems.length;
-                // 포인터 보정 계산 (12시 방향 기준)
                 const index = Math.floor((360 - (actualDegree % 360) + 270) % 360 / arcDegree) % activeItems.length;
                 resultDiv.innerText = `결과: [${activeItems[index].name}]`;
             }, 4000);
