@@ -132,25 +132,9 @@
 
                 ctx.save();
                 ctx.fillStyle = "#333";
+                ctx.font = "bold 24px Arial"; // 원본과 동일한 고정 폰트 크기 적용
                 
-                // 글씨 길이 및 항목 개수에 따른 동적 폰트 크기 계산 (글씨 잘림 방지)
-                let fontSize = 24;
-                if (activeItems.length > 15) {
-                    fontSize = 16;
-                } else if (activeItems.length > 10) {
-                    fontSize = 18;
-                } else if (activeItems.length > 6) {
-                    fontSize = 20;
-                }
-                
-                // 글자가 너무 길면 크기를 더 줄여서 원 안에 들어오도록 보정
-                if (item.name.length > 10) {
-                    fontSize = Math.max(12, fontSize - (item.name.length - 10) * 0.8);
-                }
-
-                ctx.font = `bold ${fontSize}px Arial`;
-                
-                ctx.translate(400 + Math.cos(angle + arc / 2) * 260, 400 + Math.sin(angle + arc / 2) * 260);
+                ctx.translate(400 + Math.cos(angle + arc / 2) * 280, 400 + Math.sin(angle + arc / 2) * 280);
                 ctx.rotate(angle + arc / 2 + Math.PI / 2);
                 ctx.fillText(item.name, -ctx.measureText(item.name).width / 2, 0);
                 ctx.restore();
