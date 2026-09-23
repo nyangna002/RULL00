@@ -132,11 +132,24 @@
 
                 ctx.save();
                 ctx.fillStyle = "#333";
-                ctx.font = "bold 24px Arial"; // 원본과 동일한 고정 폰트 크기 적용
+                ctx.font = "bold 20px Arial";
+
+                const textAngle = angle + arc / 2;
+                const isLeft = textAngle > Math.PI / 2 && textAngle < Math.PI * 1.5;
+
+                // 조각의 중앙 위치 계산 (반지름 250 위치)
+                ctx.translate(400 + Math.cos(textAngle) * 250, 400 + Math.sin(textAngle) * 250);
+                ctx.rotate(textAngle);
+
+                if (isLeft) {
+                    ctx.rotate(Math.PI);
+                }
+
+                // 텍스트 정렬을 중앙(center)으로 설정
+                ctx.textAlign = "center";
+                ctx.textBaseline = "middle";
+                ctx.fillText(item.name, 0, 0);
                 
-                ctx.translate(400 + Math.cos(angle + arc / 2) * 280, 400 + Math.sin(angle + arc / 2) * 280);
-                ctx.rotate(angle + arc / 2 + Math.PI / 2);
-                ctx.fillText(item.name, -ctx.measureText(item.name).width / 2, 0);
                 ctx.restore();
             });
         }
