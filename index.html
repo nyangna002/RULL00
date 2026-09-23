@@ -10,13 +10,19 @@
 
         .container { display: flex; flex-direction: column; align-items: center; gap: 20px; background: white; padding: 20px; border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); width: 95%; max-width: 500px; box-sizing: border-box; }
         
-        /* 설정 영역 - 모바일에서는 룰렛 아래로 배치하거나 높이 조절 */
+        /* 설정 영역 */
         .settings { width: 100%; order: 2; }
+        .setting-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .setting-header h3 { margin: 0; }
+        .batch-btns { display: flex; gap: 5px; }
+        .batch-btns button { width: auto; margin-top: 0; padding: 5px 10px; font-size: 0.8rem; background: #636e72; border-radius: 6px; }
+        .batch-btns button:hover { background: #2d3436; }
+
         .item-list { list-style: none; padding: 0; max-height: 200px; overflow-y: auto; border: 1px solid #eee; border-radius: 10px; padding: 5px; }
         .item-list li { display: flex; align-items: center; margin-bottom: 5px; padding: 8px; border-bottom: 1px solid #f9f9f9; font-size: 0.9rem; }
         .item-list input { width: 18px; height: 18px; margin-right: 10px; }
 
-        /* 룰렛 영역 - 화면 폭에 맞춰 크기 조절 */
+        /* 룰렛 영역 */
         .roulette-outer { width: 100%; display: flex; justify-content: center; order: 1; }
         .roulette-container { position: relative; width: 300px; height: 300px; }
         canvas { width: 100%; height: 100%; border-radius: 50%; border: 4px solid #333; transition: transform 4s cubic-bezier(0.15, 0, 0.15, 1); }
@@ -28,10 +34,10 @@
         button:active { background: #0984e3; transform: scale(0.98); }
         #result { margin-top: 20px; font-size: 1.3rem; font-weight: bold; color: #1e90ff; min-height: 30px; text-align: center; }
 
-        /* PC 버전 (가로가 넓을 때) 레이아웃 복구 */
+        /* PC 버전 레이아웃 */
         @media (min-width: 768px) {
             .container { flex-direction: row; max-width: 800px; align-items: flex-start; padding: 30px; }
-            .settings { width: 250px; order: 1; }
+            .settings { width: 280px; order: 1; }
             .item-list { max-height: 400px; }
             .roulette-outer { width: 400px; order: 2; }
             .roulette-container { width: 400px; height: 400px; }
@@ -44,7 +50,13 @@
     <h1>멤버 룰렛</h1>
     <div class="container">
         <div class="settings">
-            <h3 style="margin-top:0;">포함 항목</h3>
+            <div class="setting-header">
+                <h3>포함 항목</h3>
+                <div class="batch-btns">
+                    <button onclick="toggleAll(true)">전체 선택</button>
+                    <button onclick="toggleAll(false)">전체 해제</button>
+                </div>
+            </div>
             <ul id="item-list" class="item-list"></ul>
         </div>
 
@@ -67,7 +79,8 @@
         const resultDiv = document.getElementById('result');
         const spinBtn = document.getElementById('spinBtn');
         
-   let rawItems = ["owner (호유원)", "1 (호유원)", "130666 (김솔음)", "74 (이강헌)", "bye bye bye (백사헌)", "D (J3)", "J (B조 조장)", "jealousy (B조 조장)", "Morpho (진나솔)", "Nightmare (이강헌)", "OP (백사헌)", "Y (김솔음)", "게헨나 (고영은)", "네버랜드를 떠나며 (이성해)", "아뇨 (백사헌)", "암막 커튼 (김솔음)", "오바 (은하제)", "쥐쥐이야 (곽제강)", "키세스 (김솔음)", "퇴근 (이결)", "네임리스 (최 요원)"];        let items = rawItems.map(name => ({ name, enabled: true }));
+        let rawItems = ["owner (호유원)", "1 (호유원)", "130666 (김솔음)", "74 (이강헌)", "bye bye bye (백사헌)", "D (J3)", "J (B조 조장)", "jealousy (B조 조장)", "Morpho (진나솔)", "Nightmare (이강헌)", "OP (백사헌)", "Y (김솔음)", "게헨나 (고영은)", "네버랜드를 떠나며 (이성해)", "아뇨 (백사헌)", "암막 커튼 (김솔음)", "오바 (은하제)", "쥐쥐이야 (곽제강)", "키세스 (김솔음)", "퇴근 (이결)", "네임리스 (최 요원)"];
+        let items = rawItems.map(name => ({ name, enabled: true }));
         const colors = ["#ff7675", "#fdcb6e", "#55efc4", "#74b9ff", "#a29bfe", "#fab1a0", "#81ecec", "#dfe6e9"];
 
         function init() {
@@ -75,7 +88,7 @@
             listEl.innerHTML = '';
             items.forEach((item, idx) => {
                 const li = document.createElement('li');
-                li.innerHTML = `<label style="width:100%; display:block;"><input type="checkbox" ${item.enabled ? 'checked' : ''} onchange="toggleItem(${idx})"> ${item.name}</label>`;
+                li.innerHTML = `<label style="width:100%; display:block; cursor:pointer;"><input type="checkbox" ${item.enabled ? 'checked' : ''} onchange="toggleItem(${idx})"> ${item.name}</label>`;
                 listEl.appendChild(li);
             });
             draw();
@@ -86,9 +99,15 @@
             draw();
         }
 
+        // 전체 선택 / 전체 해제 함수
+        function toggleAll(status) {
+            items.forEach(item => item.enabled = status);
+            init();
+        }
+
         function draw() {
             const activeItems = items.filter(i => i.enabled);
-            ctx.clearRect(0, 0, 800, 800); // 캔버스 해상도를 높여서 모바일에서도 선명하게
+            ctx.clearRect(0, 0, 800, 800);
 
             if (activeItems.length === 0) {
                 ctx.fillStyle = "#333";
@@ -113,8 +132,25 @@
 
                 ctx.save();
                 ctx.fillStyle = "#333";
-                ctx.font = "bold 24px Arial"; // 해상도가 800이라 폰트 크기도 키움
-                ctx.translate(400 + Math.cos(angle + arc / 2) * 280, 400 + Math.sin(angle + arc / 2) * 280);
+                
+                // 글씨 길이 및 항목 개수에 따른 동적 폰트 크기 계산 (글씨 잘림 방지)
+                let fontSize = 24;
+                if (activeItems.length > 15) {
+                    fontSize = 16;
+                } else if (activeItems.length > 10) {
+                    fontSize = 18;
+                } else if (activeItems.length > 6) {
+                    fontSize = 20;
+                }
+                
+                // 글자가 너무 길면 크기를 더 줄여서 원 안에 들어오도록 보정
+                if (item.name.length > 10) {
+                    fontSize = Math.max(12, fontSize - (item.name.length - 10) * 0.8);
+                }
+
+                ctx.font = `bold ${fontSize}px Arial`;
+                
+                ctx.translate(400 + Math.cos(angle + arc / 2) * 260, 400 + Math.sin(angle + arc / 2) * 260);
                 ctx.rotate(angle + arc / 2 + Math.PI / 2);
                 ctx.fillText(item.name, -ctx.measureText(item.name).width / 2, 0);
                 ctx.restore();
